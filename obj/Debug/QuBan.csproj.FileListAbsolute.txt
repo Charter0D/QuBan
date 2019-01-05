@@ -1,0 +1,11 @@
+U:\Git\Mine\QuBan\bin\Debug\QuBan.dll
+U:\Git\Mine\QuBan\bin\Debug\QuBan.pdb
+U:\Git\Mine\QuBan\bin\Debug\MySql.Data.dll
+U:\Git\Mine\QuBan\obj\Debug\QuBan.csprojAssemblyReference.cache
+U:\Git\Mine\QuBan\obj\Debug\QuBan.csproj.CoreCompileInputs.cache
+U:\Git\Mine\QuBan\obj\Debug\QuBan.csproj.CopyComplete
+U:\Git\Mine\QuBan\obj\Debug\QuBan.dll
+U:\Git\Mine\QuBan\obj\Debug\QuBan.pdb
+U:\Git\Mine\QuBan\bin\Debug\Newtonsoft.Json.dll
+U:\Git\Mine\QuBan\bin\Debug\Newtonsoft.Json.pdb
+U:\Git\Mine\QuBan\bin\Debug\Newtonsoft.Json.xml
