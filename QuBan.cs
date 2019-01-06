@@ -108,6 +108,7 @@ namespace QuBan
                     {
                         Database.Ban(p, caller, Configuration.Instance.DefaultBanReason);
                         caller.SendMessage("success");
+                        p.Kick(Configuration.Instance.DefaultBanReason);
                     }
                     else
                         caller.SendMessage("invalid");
@@ -117,6 +118,7 @@ namespace QuBan
                     if (pa != null)
                     {
                         Database.Ban(pa, caller, args[1]);
+                        pa.Kick(args[1]);
                         caller.SendMessage("success");
                     }
                     else
@@ -129,6 +131,7 @@ namespace QuBan
                         if (paa != null)
                         {
                             Database.Ban(paa, caller, args[1], dura);
+                            paa.Kick(args[1]);
                             caller.SendMessage("success");
                         }
                         else
@@ -156,6 +159,7 @@ namespace QuBan
                     if (p != null)
                     {
                         Database.IPBan(p, caller, Configuration.Instance.DefaultBanReason);
+                        p.Kick(Configuration.Instance.DefaultBanReason);
                         caller.SendMessage("success");
                     }
                     else
@@ -166,6 +170,7 @@ namespace QuBan
                     if (pa != null)
                     {
                         Database.IPBan(pa, caller, args[1]);
+                        pa.Kick(args[1]);
                         caller.SendMessage("success");
                     }
                     else
@@ -178,6 +183,7 @@ namespace QuBan
                         if (paa != null)
                         {
                             Database.IPBan(paa, caller, args[1], dura);
+                            paa.Kick(args[1]);
                             caller.SendMessage("success");
                         }
                         else

@@ -59,7 +59,6 @@ namespace QuBan
         {
             OpenConnection();
             var reader = new MySqlCommand(command, Connection).ExecuteReader();
-            CloseConnection();
             return reader;
         }
 
@@ -78,15 +77,19 @@ namespace QuBan
         {
             bool res = false;
             reason = "";
-            var reader = ExecuteCommandReader($"SELECT * FROM {TableBans} WHERE ViolatorID LIKE {player.CSteamID.m_SteamID}");
-            while (reader.NextResult())
+            using (var reader = ExecuteCommandReader($"SELECT * FROM {TableBans} WHERE ViolatorID LIKE {player.CSteamID.m_SteamID}"))
             {
-                if (Still(DateTime.Parse(reader["Time"].ToString()), int.Parse(reader["Duration"].ToString())) && !bool.Parse(reader["Cancelled"].ToString()))
+                while (reader.Read())
                 {
-                    res = true;
-                    reason = reader["Reason"].ToString();
+                    if (Still(DateTime.Parse(reader["Time"].ToString()), int.Parse(reader["Duration"].ToString())) && !bool.Parse(reader["Cancelled"].ToString()))
+                    {
+                        res = true;
+                        reason = reader["Reason"].ToString();
+                    }
                 }
+                reader.Close();
             }
+            CloseConnection();
             return res;
         }
 
@@ -94,37 +97,41 @@ namespace QuBan
         {
             bool res = false;
             reason = "";
-            var reader = ExecuteCommandReader($"SELECT * FROM {TableBans} WHERE ViolatorID LIKE {player.CSteamID.m_SteamID} OR ViolatorIP LIKE {player.IP}");
-            while (reader.NextResult())
+            using (var reader = ExecuteCommandReader($"SELECT * FROM {TableIPBans} WHERE ViolatorID LIKE {player.CSteamID.m_SteamID} OR ViolatorIP LIKE '{player.IP}'"))
             {
-                if (Still(DateTime.Parse(reader["Time"].ToString()), int.Parse(reader["Duration"].ToString())) && !bool.Parse(reader["Cancelled"].ToString()))
+                while (reader.Read())
                 {
-                    res = true;
-                    reason = reader["Reason"].ToString();
+                    if (Still(DateTime.Parse(reader["Time"].ToString()), int.Parse(reader["Duration"].ToString())) && !bool.Parse(reader["Cancelled"].ToString()))
+                    {
+                        res = true;
+                        reason = reader["Reason"].ToString();
+                    }
                 }
+                reader.Close();
             }
+            CloseConnection();
             return res;
         }
 
 
         public void Ban(UnturnedPlayer player, IRocketPlayer caller, string reason, int duration = 0)
         {
-            ExecuteCommand($"INSERT IGNORE INTO {TableBans} (ViolatorID, Violator, AdminID, Admin, Reason, Duration, Time) VALUES ({player.CSteamID.m_SteamID.ToString()}, {player.CharacterName}, {caller.Id}, {caller.DisplayName}, {reason}, {duration.ToString()}, NOW())");
+            ExecuteCommand($"INSERT IGNORE INTO {TableBans} (ViolatorID, Violator, AdminID, Admin, Reason, Duration, Time, Cancelled) VALUES ('{player.CSteamID.m_SteamID.ToString()}', '{player.CharacterName}', {caller.Id}, '{caller.DisplayName}', '{reason}', {duration.ToString()}, NOW(), 'false')");
         }
 
         public void IPBan(UnturnedPlayer player, IRocketPlayer caller, string reason, int duration = 0)
         {
-            ExecuteCommand($"INSERT IGNORE INTO {TableIPBans} (ViolatorID, ViolatorIP, Violator, AdminID, Admin, Reason, Duration, Time) VALUES ({player.CSteamID.m_SteamID.ToString()}, {player.IP}, {player.CharacterName}, {caller.Id}, {caller.DisplayName}, {reason}, {duration.ToString()}, NOW())");
+            ExecuteCommand($"INSERT IGNORE INTO {TableIPBans} (ViolatorID, ViolatorIP, Violator, AdminID, Admin, Reason, Duration, Time, Cancelled) VALUES ('{player.CSteamID.m_SteamID.ToString()}', '{player.IP}', '{player.CharacterName}', '{caller.Id}', '{caller.DisplayName}', '{reason}', {duration.ToString()}, NOW(), 'false')");
         }
 
         public void UNIPBan(string name)
         {
-            ExecuteCommand($"UPDATE {TableIPBans} SET Cancelled='true' WHERE ViolatorID LIKE '{name}' OR ViolatorIP LIKE '{name}' OR Violator LIKE {name}");
+            ExecuteCommand($"UPDATE {TableIPBans} SET Cancelled='true' WHERE ViolatorID LIKE '{name}' OR ViolatorIP LIKE '{name}' OR Violator LIKE '{name}'");
         }
 
         public void UNBan(string nama)
         {
-            ExecuteCommand($"UPDATE {TableBans} SET Cancelled='true' WHERE ViolatorID LIKE '{nama}' OR Violator LIKE {nama}");
+            ExecuteCommand($"UPDATE {TableBans} SET Cancelled='true' WHERE ViolatorID LIKE '{nama}' OR Violator LIKE '{nama}'");
         }
     }
 }
